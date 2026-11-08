@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#101619">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23d5f451' d='M0 0h64v50L46 64H0z'/%3E%3Ctext x='14' y='47' font-family='Arial,sans-serif' font-size='49' font-weight='900' fill='%23182019'%3ES%3C/text%3E%3C/svg%3E">
+  <title>Strikepoint: Redline</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="game-shell" aria-label="Strikepoint Redline game">
+    <canvas id="game" aria-label="Combat arena"></canvas>
+    <div class="scanlines" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">S</span><div><b>STRIKEPOINT</b><small>REDLINE // FRONTIER OPS</small></div></div>
+      <div class="match-pill"><span class="live-dot"></span><span id="match-state">DEPLOYMENT READY</span></div>
+      <button id="sound-btn" class="icon-btn" aria-label="Toggle sound">♪ <span>SOUND</span></button>
+    </header>
+    <section class="hud" id="hud" hidden>
+      <div class="objective"><span class="eyebrow">SECTOR OBJECTIVE</span><strong>SECURE THE RELAY</strong><div class="capture-track"><i id="capture-fill"></i></div><small id="objective-status">Move into the marked zone</small></div>
+      <div class="match-stats"><div><small>ELIMS</small><b id="kills">00</b></div><div><small>WAVE</small><b id="wave">01</b></div><div><small>TIME</small><b id="timer">00:00</b></div></div>
+      <div class="minimap-frame"><canvas id="minimap" width="156" height="112"></canvas><span>N</span><i>SECTOR 07</i></div>
+      <div class="bottom-hud">
+        <div class="player-readout"><span class="eyebrow">OPERATOR // YOU</span><div class="health-row"><b id="health-value">100</b><div class="health-track"><i id="health-fill"></i></div><span>HP</span></div><div class="armor-track"><i id="armor-fill"></i></div></div>
+        <div class="weapon-readout"><div class="weapon-icon" id="weapon-icon">⌁</div><div><small id="weapon-class">ASSAULT RIFLE</small><b id="weapon-name">VXR-9</b><span id="weapon-hint">1 / 2 / 3 TO SWITCH</span></div><div class="ammo"><strong id="ammo">30</strong><span>/ <i id="reserve">120</i></span><small>AMMO</small></div></div>
+        <div class="vehicle-readout" id="vehicle-readout" hidden><span>VEHICLE</span><b id="vehicle-label">RANGER 4×4</b><small>E TO EXIT</small></div>
+        <div class="squad-readout"><span class="squad-icons">● ● ●</span><div><b>FIRETEAM ECHO</b><small>3 OPERATORS // AI SQUAD</small></div></div>
+      </div>
+      <div class="toast" id="toast" aria-live="polite"></div>
+      <div class="crosshair" id="crosshair"><i></i><b></b></div>
+      <div class="interact-hint" id="interact-hint" hidden><kbd>E</kbd> <span>ENTER RANGER</span></div>
+      <div class="reload-indicator" id="reload-indicator" hidden>RELOADING <i></i></div>
+    </section>
+    <section id="menu" class="menu-layer">
+      <div class="menu-card">
+        <div class="season-tag"><span></span> SEASON 04 · FRONTIER</div>
+        <h1>OWN THE<br><em>FRONTLINE.</em></h1>
+        <p class="intro">Drop into Dustline. Clear the hostile squad, secure the relay, and get out alive.</p>
+        <div class="feature-row"><div><b>06</b><span>OPERATORS</span></div><div><b>03</b><span>WEAPON CLASSES</span></div><div><b>01</b><span>LIVE SECTOR</span></div></div>
+        <button id="deploy-btn" class="deploy-btn"><span>DEPLOY TO DUSTLINE</span><b>↗</b></button>
+        <div class="control-note"><span>⌨ WASD <i>MOVE</i></span><span>⌖ MOUSE <i>AIM & FIRE</i></span><span>▣ E <i>VEHICLE</i></span></div>
+      </div>
+      <div class="menu-foot"><span>CASUAL MATCH <i>·</i> BOT SQUAD</span><span>PC + TOUCH READY</span></div>
+    </section>
+    <section id="pause-layer" class="pause-layer" hidden><div class="pause-card"><span class="eyebrow">FIELD COMMS</span><h2>PAUSED</h2><p>Your squad is holding position.</p><button id="resume-btn" class="deploy-btn"><span>RESUME MISSION</span><b>↗</b></button><button id="restart-btn" class="text-btn">REDEPLOY FROM CHECKPOINT</button></div></section>
+    <section id="end-layer" class="pause-layer" hidden><div class="pause-card"><span class="eyebrow">MISSION REPORT</span><h2 id="end-title">SECTOR SECURED</h2><p id="end-copy">The relay is back in friendly hands.</p><div class="result-stats"><span><b id="result-kills">0</b> HOSTILES DOWN</span><span><b id="result-time">00:00</b> TIME</span></div><button id="again-btn" class="deploy-btn"><span>DEPLOY AGAIN</span><b>↗</b></button></div></section>
+    <div class="touch-controls" id="touch-controls" aria-label="Touch controls">
+      <div class="stick-zone" id="move-zone"><div class="stick-base"><div class="stick-knob" id="move-knob"></div></div><small>MOVE</small></div>
+      <div class="touch-actions"><button id="reload-touch" class="touch-btn">↻<small>RELOAD</small></button><button id="switch-touch" class="touch-btn">⇄<small>WEAPON</small></button><button id="fire-touch" class="fire-btn"><span>FIRE</span></button></div>
+      <div class="stick-zone aim-zone" id="aim-zone"><div class="stick-base"><div class="stick-knob" id="aim-knob"></div></div><small>AIM</small></div>
+      <button id="vehicle-touch" class="vehicle-touch" hidden>ENTER VEHICLE</button>
+    </div>
+    <div class="mobile-tip" id="mobile-tip">LEFT STICK MOVE · RIGHT STICK AIM · FIRE TO ENGAGE</div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
